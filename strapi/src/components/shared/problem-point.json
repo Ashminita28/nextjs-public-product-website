@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_shared_problem_points",
+  "info": {
+    "displayName": "problem-point"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "text"
+    }
+  },
+  "config": {}
+}

@@ -1,0 +1,60 @@
+{
+  "kind": "singleType",
+  "collectionName": "landing_pages",
+  "info": {
+    "singularName": "landing-page",
+    "pluralName": "landing-pages",
+    "displayName": "Landing Page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "component": "shared.hero",
+      "repeatable": false
+    },
+    "problem": {
+      "type": "component",
+      "component": "shared.problem",
+      "repeatable": false
+    },
+    "solution": {
+      "type": "component",
+      "component": "shared.solution",
+      "repeatable": true
+    },
+    "capabilities": {
+      "type": "component",
+      "component": "landing.capability",
+      "repeatable": true
+    },
+    "module": {
+      "type": "component",
+      "component": "landing.module",
+      "repeatable": true
+    },
+    "stats": {
+      "type": "component",
+      "component": "shared.stat",
+      "repeatable": true
+    },
+    "features": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::feature.feature"
+    },
+    "use_cases": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::use-case.use-case"
+    },
+    "pricing_plans": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::pricing-plan.pricing-plan"
+    }
+  }
+}
