@@ -1,11 +1,9 @@
-import { Navbar } from "@/components/layout/navbar";
-import { Providers } from "@/components/providers";
-import { Inter } from "next/font/google";
-import { cn } from "@/lib/utils";
-import "./globals.css";
-
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
-
+import { Navbar } from '@/components/layout/navbar';
+import { Footer } from '@/components/layout/footer';
+import { Providers } from '@/components/providers';
+import { dmSans, dmMono } from '@/lib/constants';
+import { cn } from '@/lib/utils';
+import './globals.css';
 
 export default function RootLayout({
   children,
@@ -13,11 +11,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("font-sans", inter.variable)}>
-      <body>
+    <html lang="en" className={cn(dmSans.variable, dmMono.variable)}>
+      <body className="flex min-h-screen flex-col bg-background font-sans antialiased">
         <Providers>
           <Navbar />
-          {children}
+          <div className="flex-1">{children}</div>
+          <Footer />
         </Providers>
       </body>
     </html>
