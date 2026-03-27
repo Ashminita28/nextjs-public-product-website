@@ -1,0 +1,30 @@
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextjs
+    ports:
+      - "3000:3000"
+    depends_on:
+      - strapi
+    environment:
+      NEXTAUTH_URL: http://localhost:3000
+    restart: always
+ 
+
+  strapi:
+    build:
+      context: ./strapi
+      dockerfile: Dockerfile
+    container_name: strapi
+    ports:
+      - "1337:1337"
+    volumes:
+      - ./strapi:/app
+      - /app/node_modules
+      - ./strapi/data:/app/data
+    environment:
+      DATABASE_CLIENT: sqlite
+      DATABASE_FILENAME: /app/data/data.db
+    restart: always
