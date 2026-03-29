@@ -1,4 +1,6 @@
 // lib/strapi.ts
+import { cache } from 'react';
+
 import { request, requestRaw, requestWithMeta } from './api';
 import type {
   BlogPostList,
@@ -47,10 +49,12 @@ export async function getBlogs(): Promise<BlogPostList> {
 }
 
 // FETCH EACH BLOG DETAIL
-export async function getBlogBySlug(slug: string): Promise<BlogPostList> {
+export const getBlogBySlug = cache(async function getBlogBySlug(
+  slug: string,
+): Promise<BlogPostList> {
   const encoded = encodeURIComponent(slug);
   return request<BlogPostList>(`/api/blogs?filters[slug][$eq]=${encoded}`);
-}
+});
 
 // FETCH LANDING PAGE DATA
 export async function getLandingPage(): Promise<LandingResponse['data']> {

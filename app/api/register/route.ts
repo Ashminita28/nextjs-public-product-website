@@ -1,21 +1,40 @@
-// app/api/register/route.ts
 import { NextResponse } from 'next/server';
 import { registerUser } from '@/lib/strapi';
-import { RegisterBody } from '@/lib/types/api-types';
+import { registerSchema } from '@/lib/validations/auth-schema';
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse> {
+  let json: unknown;
   try {
-    const body: RegisterBody = await req.json();
-
-    const data = await registerUser(body);
-
-    // Ensure it's JSON-serializable
-    const serializable = JSON.parse(JSON.stringify(data));
-
-    return NextResponse.json(serializable);
-  } catch (error) {
+    json = await req.json();
+  } catch {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Register failed' },
+      { error: 'Invalid request body.' },
+      { status: 400 },
+    );
+  }
+
+  const parsed = registerSchema.safeParse(json);
+  if (!parsed.success) {
+    const message =
+      parsed.error.issues[0]?.message ??
+      'Please check your input and try again.';
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+
+  try {
+    const data = await registerUser(parsed.data);
+
+    return NextResponse.json({
+      message: 'Your account is ready.',
+      user: {
+        id: data.user.id,
+        email: data.user.email,
+        username: data.user.username,
+      },
+    });
+  } catch {
+    return NextResponse.json(
+      { error: 'Unable to create your account. Please try again.' },
       { status: 400 },
     );
   }

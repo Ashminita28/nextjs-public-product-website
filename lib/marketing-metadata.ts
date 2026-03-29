@@ -1,23 +1,63 @@
 // lib/marketing-metadata.ts
 import type { Metadata } from 'next';
 
-type MarketingPage = 'home' | 'features' | 'pricing';
+import { getSiteUrl } from './site';
+
+type MarketingPage = 'home' | 'features' | 'pricing' | 'blog';
 
 interface MarketingMetadataOptions {
   page: MarketingPage;
 }
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+function marketingPageMetadata(opts: {
+  title: string;
+  description: string;
+  path: string;
+  image: string;
+  imageAlt: string;
+  keywords: string[];
+}): Metadata {
+  const base = getSiteUrl();
+  return {
+    title: opts.title,
+    description: opts.description,
+    keywords: opts.keywords,
+    openGraph: {
+      title: opts.title,
+      description: opts.description,
+      url: `${base}${opts.path}`,
+      siteName: 'Fligo',
+      images: [
+        {
+          url: opts.image,
+          width: 1200,
+          height: 630,
+          alt: opts.imageAlt,
+        },
+      ],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: opts.title,
+      description: opts.description,
+      images: [opts.image],
+    },
+  };
+}
 
 export function buildMarketingMetadata({
   page,
 }: MarketingMetadataOptions): Metadata {
   switch (page) {
     case 'home':
-      return {
+      return marketingPageMetadata({
         title: 'Fligo - Streamlined Aviation Operations',
         description:
           'Fligo helps aviation teams manage operations efficiently with intuitive dashboards and tools.',
+        path: '/',
+        image: '/og-home.png',
+        imageAlt: 'Fligo homepage',
         keywords: [
           'Fligo',
           'Aviation',
@@ -25,72 +65,37 @@ export function buildMarketingMetadata({
           'Dashboard',
           'Management',
         ],
-        openGraph: {
-          title: 'Fligo - Streamlined Aviation Operations',
-          description:
-            'Fligo helps aviation teams manage operations efficiently with intuitive dashboards and tools.',
-          url: SITE_URL,
-          siteName: 'Fligo',
-          images: [],
-          type: 'website',
-        },
-        twitter: {
-          card: 'summary_large_image',
-          title: 'Fligo - Streamlined Aviation Operations',
-          description:
-            'Fligo helps aviation teams manage operations efficiently with intuitive dashboards and tools.',
-          images: [], // empty for now
-        },
-      };
-
+      });
     case 'features':
-      return {
+      return marketingPageMetadata({
         title: 'Fligo Features - Optimize Your Aviation Workflow',
         description:
           'Explore all Fligo features designed to make aviation operations smooth and efficient.',
+        path: '/features',
+        image: '/og-features.png',
+        imageAlt: 'Fligo features',
         keywords: ['Fligo', 'Features', 'Aviation', 'Operations', 'Tools'],
-        openGraph: {
-          title: 'Fligo Features - Optimize Your Aviation Workflow',
-          description:
-            'Explore all Fligo features designed to make aviation operations smooth and efficient.',
-          url: `${SITE_URL}/features`,
-          siteName: 'Fligo',
-          images: [],
-          type: 'website',
-        },
-        twitter: {
-          card: 'summary_large_image',
-          title: 'Fligo Features - Optimize Your Aviation Workflow',
-          description:
-            'Explore all Fligo features designed to make aviation operations smooth and efficient.',
-          images: [],
-        },
-      };
-
+      });
     case 'pricing':
-      return {
+      return marketingPageMetadata({
         title: 'Fligo Pricing - Flexible Plans for Aviation Teams',
         description:
           'Choose the right Fligo plan for your aviation operations and team size.',
+        path: '/pricing',
+        image: '/og-pricing.png',
+        imageAlt: 'Fligo pricing plans',
         keywords: ['Fligo', 'Pricing', 'Plans', 'Aviation', 'Subscription'],
-        openGraph: {
-          title: 'Fligo Pricing - Flexible Plans for Aviation Teams',
-          description:
-            'Choose the right Fligo plan for your aviation operations and team size.',
-          url: `${SITE_URL}/pricing`,
-          siteName: 'Fligo',
-          images: [],
-          type: 'website',
-        },
-        twitter: {
-          card: 'summary_large_image',
-          title: 'Fligo Pricing - Flexible Plans for Aviation Teams',
-          description:
-            'Choose the right Fligo plan for your aviation operations and team size.',
-          images: [],
-        },
-      };
-
+      });
+    case 'blog':
+      return marketingPageMetadata({
+        title: 'Fligo Blog - Insights & updates',
+        description:
+          'Aviation operations news, product updates, and industry insights from Fligo.',
+        path: '/blog',
+        image: '/og-home.png',
+        imageAlt: 'Fligo blog',
+        keywords: ['Fligo', 'Blog', 'Aviation', 'Operations', 'News'],
+      });
     default:
       return {
         title: 'Fligo',

@@ -1,8 +1,13 @@
 import { getBlogs } from '@/lib/strapi';
+import { buildMarketingMetadata } from '@/lib/marketing-metadata';
 import { BlogListSection } from '@/components/landing/blog-listing-section';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { CardDescription } from '@/components/ui/card';
+
+export async function generateMetadata() {
+  return buildMarketingMetadata({ page: 'blog' });
+}
 
 export default async function BlogPage() {
   const posts = await getBlogs();

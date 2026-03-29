@@ -9,7 +9,7 @@ export const loginSchema = z.object({
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export const registerSchema = z.object({
-  name: z.string(),
+  name: z.string().trim().min(1, { message: 'Name is required' }),
   email: z.string().email({ message: 'Invalid email address' }),
   password: z
     .string()
