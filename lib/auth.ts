@@ -1,11 +1,12 @@
-import { NextAuthOptions } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import type { StrapiAuthResponse } from "@/lib/types";
+import { NextAuthOptions } from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import { loginUser } from '@/lib/strapi';
+import { LoginBody } from '@/lib/types/api-types';
 
 export const authOptions: NextAuthOptions = {
   providers: [
     Credentials({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
         email: {},
         password: {},
@@ -13,28 +14,20 @@ export const authOptions: NextAuthOptions = {
 
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          throw new Error('Missing credentials');
         }
 
-        const res = await fetch("http://localhost:1337/api/auth/local", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            identifier: credentials.email,
-            password: credentials.password,
-          }),
-        });
+        const body: LoginBody = {
+          identifier: credentials.email,
+          password: credentials.password,
+        };
 
-        if (!res.ok) return null;
-
-        const data: StrapiAuthResponse = await res.json();
+        const data = await loginUser(body);
 
         return {
-          id: data.user.id.toString(),
-          name: data.user.username,
+          id: String(data.user.id),
           email: data.user.email,
+          name: data.user.username,
           jwt: data.jwt,
         };
       },
@@ -42,25 +35,26 @@ export const authOptions: NextAuthOptions = {
   ],
 
   pages: {
-    signIn: "/login",
+    signIn: '/login',
   },
 
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
 
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
         token.jwt = user.jwt;
       }
       return token;
     },
 
     async session({ session, token }) {
-      session.user.id = token.id;
-      session.jwt = token.jwt;
+      if (session.user) {
+        session.user.id = token.sub!;
+      }
+      session.jwt = token.jwt as string;
       return session;
     },
   },
