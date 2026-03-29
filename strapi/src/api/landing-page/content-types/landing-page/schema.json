@@ -55,6 +55,11 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::pricing-plan.pricing-plan"
+    },
+    "blogs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::blog.blog"
     }
   }
 }
