@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_shared_problems",
+  "info": {
+    "displayName": "problem"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "points": {
+      "type": "component",
+      "component": "shared.problem-point",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}
