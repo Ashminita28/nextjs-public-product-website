@@ -4,6 +4,7 @@ import { Providers } from '@/components/providers';
 import { dmSans, dmMono } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import './globals.css';
+import { Toaster } from 'sonner';
 
 export default function RootLayout({
   children,
@@ -17,6 +18,7 @@ export default function RootLayout({
           <Navbar />
           <div className="flex-1">{children}</div>
           <Footer />
+          <Toaster />
         </Providers>
       </body>
     </html>

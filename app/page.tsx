@@ -3,7 +3,7 @@ import { ProblemSection } from '@/components/landing/problem';
 import { SolutionSection } from '@/components/landing/solution';
 import { UseCasesSection } from '@/components/landing/use-cases';
 import { PricingSection } from '@/components/landing/pricing';
-import { Newsletter } from '@/components/newsletter';
+import { NewsletterForm } from '@/components/newsletter';
 import { getLandingPage } from '@/lib/strapi';
 import FeaturesPage from './features/page';
 
@@ -18,7 +18,7 @@ export default async function Page() {
       <FeaturesPage />
       <UseCasesSection useCases={content.use_cases} />
       <PricingSection plans={content.pricing_plans} />
-      <Newsletter />
+      <NewsletterForm />
     </main>
   );
 }
