@@ -1,30 +1,38 @@
 services:
-  nextjs:
+  web:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nextjs
+    container_name: aviation-web
+    env_file:
+      - ./.env.docker
     ports:
       - "3000:3000"
     depends_on:
-      - strapi
-    environment:
-      NEXTAUTH_URL: http://localhost:3000
-    restart: always
- 
+      strapi:
+        condition: service_healthy
 
   strapi:
     build:
       context: ./strapi
       dockerfile: Dockerfile
-    container_name: strapi
+    container_name: aviation-strapi
     ports:
       - "1337:1337"
+    env_file:
+      - ./strapi/.env
     volumes:
-      - ./strapi:/app
-      - /app/node_modules
-      - ./strapi/data:/app/data
-    environment:
-      DATABASE_CLIENT: sqlite
-      DATABASE_FILENAME: /app/data/data.db
-    restart: always
+      - ./strapi/.tmp:/opt/app/.tmp
+      - ./strapi/public/uploads:/opt/app/public/uploads
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:1337/api/landing-page').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
