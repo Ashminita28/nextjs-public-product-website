@@ -23,7 +23,7 @@ export function Footer() {
                   <Plane className="h-3.5 w-3.5 -rotate-45" />
                 </span>
                 <span className="text-sm font-semibold tracking-tight text-foreground">
-                  FlightOps
+                  Fligo
                 </span>
               </Link>
             </Button>
@@ -70,7 +70,7 @@ export function Footer() {
         {/* Bottom row — copyright + socials */}
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <p className="text-[12px] text-muted-foreground">
-            © {new Date().getFullYear()} FlightOps, Inc. All rights reserved.
+            © {new Date().getFullYear()} Fligo, Inc. All rights reserved.
           </p>
 
           <div className="flex items-center gap-1">

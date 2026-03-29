@@ -13,11 +13,42 @@ import {
 } from '@/components/ui/sheet';
 import { navLinks } from '@/lib/constants';
 import { Plane, Menu } from '@/lib/icons';
+import { ReactElement } from 'react';
 
-export function Navbar() {
+function NavbarLoadingShell(): ReactElement {
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-white/90 backdrop-blur-sm">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+        <div
+          className="h-7 w-28 animate-pulse rounded-md bg-muted"
+          aria-hidden
+        />
+        <div className="hidden items-center gap-2 md:flex">
+          <div
+            className="h-8 w-16 animate-pulse rounded-md bg-muted"
+            aria-hidden
+          />
+          <div
+            className="h-8 w-20 animate-pulse rounded-md bg-muted"
+            aria-hidden
+          />
+        </div>
+        <div
+          className="h-8 w-8 animate-pulse rounded-md bg-muted md:hidden"
+          aria-hidden
+        />
+      </div>
+      <span className="sr-only">Loading navigation</span>
+    </header>
+  );
+}
+
+export function Navbar(): ReactElement {
   const { data: session, status } = useSession();
 
-  if (status === 'loading') return null;
+  if (status === 'loading') {
+    return <NavbarLoadingShell />;
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-white/90 backdrop-blur-sm">

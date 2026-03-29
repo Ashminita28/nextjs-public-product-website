@@ -17,25 +17,38 @@ type FetchOptions = {
   auth?: boolean;
 };
 
-// CORE REQUEST
-export async function request<T>(
-  endpoint: string,
-  options: FetchOptions = {},
-): Promise<T> {
-  const { method = 'GET', body, cache = 'no-store', auth = false } = options;
-
-  let token: string | undefined;
-  if (auth) {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.jwt) {
-      throw new Error('Unauthorized');
-    }
-
-    token = session.jwt;
+function extractHttpErrorMessage(json: unknown, status: number): string {
+  if (
+    typeof json === 'object' &&
+    json !== null &&
+    'error' in json &&
+    typeof (json as { error?: { message?: string } }).error?.message ===
+      'string'
+  ) {
+    return (json as { error: { message: string } }).error.message;
   }
+  return `Request failed (${status})`;
+}
 
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+async function getBearerToken(auth: boolean): Promise<string | undefined> {
+  if (!auth) {
+    return undefined;
+  }
+  const session = await getServerSession(authOptions);
+  if (!session?.jwt) {
+    throw new Error('Unauthorized');
+  }
+  return session.jwt;
+}
+
+async function strapiFetch(
+  endpoint: string,
+  options: FetchOptions,
+): Promise<Response> {
+  const { method = 'GET', body, cache = 'no-store', auth = false } = options;
+  const token = await getBearerToken(auth);
+
+  return fetch(`${BASE_URL}${endpoint}`, {
     method,
     cache,
     headers: {
@@ -44,8 +57,35 @@ export async function request<T>(
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
+}
 
-  const json: StrapiResponse<T, unknown> = await res.json();
+async function parseStrapiEnvelope<T, M>(
+  res: Response,
+): Promise<StrapiResponse<T, M>> {
+  let json: unknown;
+  try {
+    json = await res.json();
+  } catch {
+    if (!res.ok) {
+      throw new Error(`Request failed (${res.status})`);
+    }
+    throw new Error('Invalid response from server');
+  }
+
+  if (!res.ok) {
+    throw new Error(extractHttpErrorMessage(json, res.status));
+  }
+
+  return json as StrapiResponse<T, M>;
+}
+
+// CORE REQUEST
+export async function request<T>(
+  endpoint: string,
+  options: FetchOptions = {},
+): Promise<T> {
+  const res = await strapiFetch(endpoint, options);
+  const json = await parseStrapiEnvelope<T, unknown>(res);
 
   if (isErrorResponse(json)) {
     throw new Error(json.error.message);
@@ -59,31 +99,8 @@ export async function requestWithMeta<T, M>(
   endpoint: string,
   options: FetchOptions = {},
 ): Promise<StrapiSuccessResponse<T, M>> {
-  const { method = 'GET', body, cache = 'no-store', auth = false } = options;
-
-  let token: string | undefined;
-
-  if (auth) {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.jwt) {
-      throw new Error('Unauthorized');
-    }
-
-    token = session.jwt;
-  }
-
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
-    method,
-    cache,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
-
-  const json: StrapiResponse<T, M> = await res.json();
+  const res = await strapiFetch(endpoint, options);
+  const json = await parseStrapiEnvelope<T, M>(res);
 
   if (isErrorResponse(json)) {
     throw new Error(json.error.message);
@@ -107,14 +124,31 @@ export async function requestRaw<T>(
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
 
-  const json = await res.json();
+  let json: unknown;
+  try {
+    json = await res.json();
+  } catch {
+    if (!res.ok) {
+      throw new Error(`Request failed (${res.status})`);
+    }
+    throw new Error('Invalid response from server');
+  }
 
   if (!res.ok) {
-    throw new Error(json.error?.message || 'Request failed');
+    const msg =
+      typeof json === 'object' &&
+      json !== null &&
+      'error' in json &&
+      typeof (json as { error?: { message?: string } }).error?.message ===
+        'string'
+        ? (json as { error: { message: string } }).error.message
+        : 'Request failed';
+    throw new Error(msg);
   }
 
   return json as T;
 }
+
 export type ApiMessage = {
   message?: string;
   error?: string;
@@ -129,10 +163,11 @@ export async function parseJsonSafely<T>(
     return null;
   }
 }
+
 export function getErrorMessage(
   error: unknown,
   fallback = 'Something went wrong. Please try again.',
-) {
+): string {
   if (error instanceof Error && error.message) {
     return error.message;
   }

@@ -1,6 +1,10 @@
 import { getPricingPlans } from '@/lib/strapi';
 import { PricingSection } from '@/components/landing/pricing';
+import { buildMarketingMetadata } from '@/lib/marketing-metadata';
 
+export async function generateMetadata() {
+  return buildMarketingMetadata({ page: 'pricing' });
+}
 export default async function PricingPage() {
   const plans = await getPricingPlans();
 

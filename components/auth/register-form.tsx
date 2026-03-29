@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useRef, useTransition, useEffect } from 'react';
+import { useId, useRef, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { composeAriaDescribedBy, scrollAndFocusElement } from '@/lib/aria';
+import { composeAriaDescribedBy } from '@/lib/aria';
 import { getErrorMessage, parseJsonSafely } from '@/lib/api';
 import { apiRoutes, pageRoutes } from '@/lib/routes';
 import {
@@ -17,8 +17,9 @@ import {
   RegisterFormValues,
 } from '@/lib/validations/auth-schema';
 import Link from 'next/link';
+import { useScrollToFirstFieldError } from '@/lib/hooks/use-scroll-to-first-field-error';
 
-export function SignupForm() {
+export function SignupForm(): React.ReactElement {
   const router = useRouter();
   const nameId = useId();
   const emailId = useId();
@@ -38,6 +39,12 @@ export function SignupForm() {
   const nameField = form.register('name');
   const emailField = form.register('email');
   const passwordField = form.register('password');
+
+  useScrollToFirstFieldError(
+    form.formState.errors,
+    fieldRefs,
+    form.formState.submitCount,
+  );
 
   const submit = form.handleSubmit((values) => {
     startTransition(async () => {
@@ -88,20 +95,6 @@ export function SignupForm() {
       }
     });
   });
-
-  useEffect(() => {
-    if (form.formState.submitCount === 0) {
-      return;
-    }
-
-    const errors = form.formState.errors;
-    const firstError = Object.keys(errors)[0] as
-      | keyof RegisterFormValues
-      | undefined;
-    if (firstError) {
-      scrollAndFocusElement(fieldRefs.current[firstError]);
-    }
-  }, [form.formState.errors, form.formState.submitCount]);
 
   return (
     <Card className="mx-auto max-w-xl p-8">

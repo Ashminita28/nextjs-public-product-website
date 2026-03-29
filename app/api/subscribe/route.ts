@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { subscribeNewsletter } from '@/lib/strapi';
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse> {
   try {
     const { email }: { email: string } = await req.json();
 
@@ -12,9 +12,9 @@ export async function POST(req: Request) {
     await subscribeNewsletter(email);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to subscribe' },
+      { error: 'Unable to subscribe. Please try again later.' },
       { status: 500 },
     );
   }

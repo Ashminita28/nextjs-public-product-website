@@ -11,7 +11,7 @@ export type IconType = ComponentType<
   SVGProps<SVGSVGElement> & { size?: number }
 >;
 
-//BLOG TYPES
+// BLOG TYPES
 
 export interface BlogPost {
   id: number;
@@ -22,9 +22,8 @@ export interface BlogPost {
   publishedAt: string;
 }
 
-export interface BlogResponse {
-  data: BlogPost[];
-}
+/** Unwrapped Strapi blog collection (`data` array after `request()`). */
+export type BlogPostList = BlogPost[];
 
 //   LANDING PAGE TYPES
 
@@ -105,13 +104,11 @@ export interface LandingResponse {
 
 //FEATURE & PRICING TYPES
 
-export interface PricingResponse {
-  data: PricingPlan[];
-}
+/** Unwrapped Strapi pricing collection. */
+export type PricingPlanList = PricingPlan[];
 
-export interface FeatureResponse {
-  data: Feature[];
-}
+/** Unwrapped Strapi feature collection. */
+export type FeatureList = Feature[];
 
 //AUTH (STRAPI)
 
@@ -151,17 +148,8 @@ export interface NewsletterSubscriber {
   subscribedAt: string;
 }
 
-export interface NewsletterResponse {
-  data: NewsletterSubscriber[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+/** Strapi collection list (`data` after unwrapping list GET). */
+export type NewsletterSubscriberList = NewsletterSubscriber[];
 
 export type SectionSkeletonProps = {
   label: string;

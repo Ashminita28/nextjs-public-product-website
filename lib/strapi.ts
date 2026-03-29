@@ -1,17 +1,18 @@
 // lib/strapi.ts
 import { request, requestRaw, requestWithMeta } from './api';
-import {
-  BlogResponse,
-  FeatureResponse,
-  PricingResponse,
+import type {
+  BlogPostList,
+  FeatureList,
   LandingResponse,
   LandingStatsResponse,
-  NewsletterResponse,
+  NewsletterSubscriber,
+  NewsletterSubscriberList,
+  PricingPlanList,
   StrapiAuthResponse,
   Stat,
 } from './types/shared-types';
 
-import {
+import type {
   RegisterBody,
   LoginBody,
   NewsletterBody,
@@ -41,15 +42,14 @@ export async function loginUser(body: LoginBody): Promise<StrapiAuthResponse> {
 }
 
 // FETCH BLOGS DATA
-export async function getBlogs(): Promise<BlogResponse['data']> {
-  return request<BlogResponse['data']>('/api/blogs');
+export async function getBlogs(): Promise<BlogPostList> {
+  return request<BlogPostList>('/api/blogs');
 }
 
-// FECTH EACH BLOG DETAIL
-export async function getBlogBySlug(
-  slug: string,
-): Promise<BlogResponse['data']> {
-  return request<BlogResponse['data']>(`/api/blogs?filters[slug][$eq]=${slug}`);
+// FETCH EACH BLOG DETAIL
+export async function getBlogBySlug(slug: string): Promise<BlogPostList> {
+  const encoded = encodeURIComponent(slug);
+  return request<BlogPostList>(`/api/blogs?filters[slug][$eq]=${encoded}`);
 }
 
 // FETCH LANDING PAGE DATA
@@ -58,28 +58,28 @@ export async function getLandingPage(): Promise<LandingResponse['data']> {
 }
 
 // FETCH FEATURES DATA
-export async function getFeatures(): Promise<FeatureResponse['data']> {
-  return request<FeatureResponse['data']>('/api/features');
+export async function getFeatures(): Promise<FeatureList> {
+  return request<FeatureList>('/api/features');
 }
 
 // FETCH PRICING PLANS DATA
-export async function getPricingPlans(): Promise<PricingResponse['data']> {
-  return request<PricingResponse['data']>('/api/pricing-plans');
+export async function getPricingPlans(): Promise<PricingPlanList> {
+  return request<PricingPlanList>('/api/pricing-plans');
 }
 
 // FETCH DASHBOARD STATS
 export async function getDashboardStats(): Promise<Stat[]> {
-  const res = request<LandingStatsResponse['data']>(
+  const data = await request<LandingStatsResponse['data']>(
     '/api/landing-page?populate=stats',
     { auth: true },
   );
-  return (await res).stats;
+  return data.stats;
 }
 
 // FETCH NEWSLETTER DATA
 export async function subscribeNewsletter(
   email: string,
-): Promise<NewsletterResponse['data']> {
+): Promise<NewsletterSubscriber> {
   const body: NewsletterBody = {
     data: {
       email,
@@ -87,7 +87,7 @@ export async function subscribeNewsletter(
     },
   };
 
-  return request<NewsletterResponse['data']>('/api/newsletter-subscribers', {
+  return request<NewsletterSubscriber>('/api/newsletter-subscribers', {
     method: 'POST',
     body,
   });
@@ -95,7 +95,7 @@ export async function subscribeNewsletter(
 
 // GET SUBSCRIBER COUNTS
 export async function getSubscriberCount(): Promise<number> {
-  const res = await requestWithMeta<NewsletterResponse['data'], PaginationMeta>(
+  const res = await requestWithMeta<NewsletterSubscriberList, PaginationMeta>(
     '/api/newsletter-subscribers?pagination[pageSize]=1',
     { auth: true },
   );

@@ -10,8 +10,15 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { icons, iconColors } from '@/lib/constants';
+import { ReactElement } from 'react';
 
-export function FeaturesSection({ features }: { features: Feature[] }) {
+type FeaturesSectionProps = {
+  features: Feature[];
+};
+
+export function FeaturesSection({
+  features,
+}: FeaturesSectionProps): ReactElement {
   return (
     <section className="bg-white px-6 py-24">
       <div className="mx-auto max-w-5xl">

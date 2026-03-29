@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useRef, useTransition, useEffect } from 'react';
+import { useId, useRef, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,12 +11,13 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { composeAriaDescribedBy, scrollAndFocusElement } from '@/lib/aria';
+import { composeAriaDescribedBy } from '@/lib/aria';
 import { loginSchema, LoginFormValues } from '@/lib/validations/auth-schema';
 import { pageRoutes } from '@/lib/routes';
 import { getErrorMessage } from '@/lib/api';
+import { useScrollToFirstFieldError } from '@/lib/hooks/use-scroll-to-first-field-error';
 
-export function LoginForm() {
+export function LoginForm(): React.ReactElement {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const fieldRefs = useRef<
@@ -34,17 +35,10 @@ export function LoginForm() {
   const emailField = form.register('email');
   const passwordField = form.register('password');
 
-  // Scroll to first error if validation fails
   const errors = form.formState.errors;
   const submitCount = form.formState.submitCount;
-  useEffect(() => {
-    if (submitCount > 0) {
-      const firstError = Object.keys(errors)[0] as
-        | keyof LoginFormValues
-        | undefined;
-      if (firstError) scrollAndFocusElement(fieldRefs.current[firstError]);
-    }
-  }, [errors, submitCount]);
+
+  useScrollToFirstFieldError(errors, fieldRefs, submitCount);
 
   const onSubmit = form.handleSubmit((values) => {
     startTransition(async () => {
@@ -129,19 +123,6 @@ export function LoginForm() {
           {pending ? 'Signing in…' : 'Sign in'}
         </Button>
       </form>
-
-      <Button
-        variant="secondary"
-        className="mt-4 w-full"
-        onClick={() =>
-          signIn('google', {
-            callbackUrl: pageRoutes.dashboard,
-            prompt: 'select_account',
-          })
-        }
-      >
-        Continue with Google
-      </Button>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         have an account?{' '}
