@@ -7,6 +7,8 @@ interface MarketingMetadataOptions {
   page: MarketingPage;
 }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
 export function buildMarketingMetadata({
   page,
 }: MarketingMetadataOptions): Metadata {
@@ -27,16 +29,9 @@ export function buildMarketingMetadata({
           title: 'Fligo - Streamlined Aviation Operations',
           description:
             'Fligo helps aviation teams manage operations efficiently with intuitive dashboards and tools.',
-          url: 'https://yourdomain.com/',
+          url: SITE_URL,
           siteName: 'Fligo',
-          images: [
-            {
-              url: '/og-home.png',
-              width: 1200,
-              height: 630,
-              alt: 'Fligo homepage',
-            },
-          ],
+          images: [],
           type: 'website',
         },
         twitter: {
@@ -44,9 +39,10 @@ export function buildMarketingMetadata({
           title: 'Fligo - Streamlined Aviation Operations',
           description:
             'Fligo helps aviation teams manage operations efficiently with intuitive dashboards and tools.',
-          images: ['/og-home.png'],
+          images: [], // empty for now
         },
       };
+
     case 'features':
       return {
         title: 'Fligo Features - Optimize Your Aviation Workflow',
@@ -57,16 +53,9 @@ export function buildMarketingMetadata({
           title: 'Fligo Features - Optimize Your Aviation Workflow',
           description:
             'Explore all Fligo features designed to make aviation operations smooth and efficient.',
-          url: 'https://yourdomain.com/features',
+          url: `${SITE_URL}/features`,
           siteName: 'Fligo',
-          images: [
-            {
-              url: '/og-features.png',
-              width: 1200,
-              height: 630,
-              alt: 'Fligo features',
-            },
-          ],
+          images: [],
           type: 'website',
         },
         twitter: {
@@ -74,9 +63,10 @@ export function buildMarketingMetadata({
           title: 'Fligo Features - Optimize Your Aviation Workflow',
           description:
             'Explore all Fligo features designed to make aviation operations smooth and efficient.',
-          images: ['/og-features.png'],
+          images: [],
         },
       };
+
     case 'pricing':
       return {
         title: 'Fligo Pricing - Flexible Plans for Aviation Teams',
@@ -87,16 +77,9 @@ export function buildMarketingMetadata({
           title: 'Fligo Pricing - Flexible Plans for Aviation Teams',
           description:
             'Choose the right Fligo plan for your aviation operations and team size.',
-          url: 'https://yourdomain.com/pricing',
+          url: `${SITE_URL}/pricing`,
           siteName: 'Fligo',
-          images: [
-            {
-              url: '/og-pricing.png',
-              width: 1200,
-              height: 630,
-              alt: 'Fligo pricing plans',
-            },
-          ],
+          images: [],
           type: 'website',
         },
         twitter: {
@@ -104,9 +87,10 @@ export function buildMarketingMetadata({
           title: 'Fligo Pricing - Flexible Plans for Aviation Teams',
           description:
             'Choose the right Fligo plan for your aviation operations and team size.',
-          images: ['/og-pricing.png'],
+          images: [],
         },
       };
+
     default:
       return {
         title: 'Fligo',
