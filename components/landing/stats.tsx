@@ -1,4 +1,4 @@
-import { Stat } from '@/lib/types';
+import { Stat } from '@/lib/types/shared-types';
 import {
   Card,
   CardContent,
