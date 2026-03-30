@@ -23,6 +23,10 @@ RUN npm install -g pnpm
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# before build
+ARG STRAPI_URL
+ENV STRAPI_URL=$STRAPI_URL
+
 # Build Next.js
 RUN pnpm build
 

@@ -1,3 +1,4 @@
+export const dynamic='force-dynamic';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
@@ -10,8 +11,10 @@ import { StatsSection } from '@/components/landing/stats';
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/login');
-  const stats = await getDashboardStats();
-  const subscribeCount = await getSubscriberCount();
+  const [stats, subscribeCount] = await Promise.all([
+    getDashboardStats(),
+    getSubscriberCount(),
+  ]);
   return (
     <main className="min-h-[calc(100vh-56px)] bg-slate-50/60 px-6 py-10">
       <div className="mx-auto max-w-5xl">

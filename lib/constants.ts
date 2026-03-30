@@ -77,25 +77,9 @@ export const footerLinks: FooterLinks = {
   ],
 
   Company: [
-    { label: 'About', href: '/about' },
     { label: 'Blog', href: '/blog' },
-    { label: 'Careers', href: '/careers' },
-    { label: 'Contact', href: '/contact' },
   ],
 
-  Resources: [
-    { label: 'Documentation', href: '/docs' },
-    { label: 'API Reference', href: '/docs/api' },
-    { label: 'Status', href: '/status' },
-    { label: 'Release Notes', href: '/releases' },
-  ],
-
-  Legal: [
-    { label: 'Terms of Service', href: '/terms' },
-    { label: 'Privacy Policy', href: '/privacy' },
-    { label: 'Security', href: '/security' },
-    { label: 'Compliance', href: '/compliance' },
-  ],
 };
 
 type Social = {

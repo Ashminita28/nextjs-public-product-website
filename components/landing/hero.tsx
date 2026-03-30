@@ -3,8 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ArrowRight, ChevronRight } from '@/lib/icons';
+import { sanitizeHref } from '@/lib/security';
 
 export function HeroSection({ hero }: { hero: Hero }) {
+  const primaryHref = sanitizeHref(hero.primary_cta_link);
+  const secondaryHref = sanitizeHref(hero.secondary_cta_link);
+
   return (
     <section className="relative overflow-hidden bg-white px-6 py-24">
       {/* Subtle dot-grid background */}
@@ -42,7 +46,7 @@ export function HeroSection({ hero }: { hero: Hero }) {
             size="lg"
             className="h-11 gap-2 px-6 text-[13px] shadow-sm shadow-primary/20"
           >
-            <a href={hero.primary_cta_link}>
+            <a href={primaryHref}>
               {hero.primary_cta_text}
               <ArrowRight className="h-4 w-4" />
             </a>
@@ -53,7 +57,7 @@ export function HeroSection({ hero }: { hero: Hero }) {
             size="lg"
             className="h-11 gap-1.5 px-6 text-[13px] text-muted-foreground hover:text-foreground"
           >
-            <a href={hero.secondary_cta_link.trim()}>
+            <a href={secondaryHref}>
               {hero.secondary_cta_text}
               <ChevronRight className="h-4 w-4" />
             </a>

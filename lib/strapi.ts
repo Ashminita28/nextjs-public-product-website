@@ -21,6 +21,8 @@ import type {
   PaginationMeta,
 } from './types/api-types';
 
+const MARKETING_REVALIDATE_SECONDS = 300;
+
 // REGISTER FETCH
 export async function registerUser(
   body: RegisterBody,
@@ -45,7 +47,10 @@ export async function loginUser(body: LoginBody): Promise<StrapiAuthResponse> {
 
 // FETCH BLOGS DATA
 export async function getBlogs(): Promise<BlogPostList> {
-  return request<BlogPostList>('/api/blogs');
+  return request<BlogPostList>('/api/blogs', {
+    cache: 'force-cache',
+    next: { revalidate: MARKETING_REVALIDATE_SECONDS, tags: ['blogs'] },
+  });
 }
 
 // FETCH EACH BLOG DETAIL
@@ -53,22 +58,34 @@ export const getBlogBySlug = cache(async function getBlogBySlug(
   slug: string,
 ): Promise<BlogPostList> {
   const encoded = encodeURIComponent(slug);
-  return request<BlogPostList>(`/api/blogs?filters[slug][$eq]=${encoded}`);
+  return request<BlogPostList>(`/api/blogs?filters[slug][$eq]=${encoded}`, {
+    cache: 'force-cache',
+    next: { revalidate: MARKETING_REVALIDATE_SECONDS, tags: [`blog:${slug}`] },
+  });
 });
 
 // FETCH LANDING PAGE DATA
 export async function getLandingPage(): Promise<LandingResponse['data']> {
-  return request<LandingResponse['data']>('/api/landing-page?populate=*');
+  return request<LandingResponse['data']>('/api/landing-page?populate=*', {
+    cache: 'force-cache',
+    next: { revalidate: MARKETING_REVALIDATE_SECONDS, tags: ['landing-page'] },
+  });
 }
 
 // FETCH FEATURES DATA
 export async function getFeatures(): Promise<FeatureList> {
-  return request<FeatureList>('/api/features');
+  return request<FeatureList>('/api/features', {
+    cache: 'force-cache',
+    next: { revalidate: MARKETING_REVALIDATE_SECONDS, tags: ['features'] },
+  });
 }
 
 // FETCH PRICING PLANS DATA
 export async function getPricingPlans(): Promise<PricingPlanList> {
-  return request<PricingPlanList>('/api/pricing-plans');
+  return request<PricingPlanList>('/api/pricing-plans', {
+    cache: 'force-cache',
+    next: { revalidate: MARKETING_REVALIDATE_SECONDS, tags: ['pricing'] },
+  });
 }
 
 // FETCH DASHBOARD STATS

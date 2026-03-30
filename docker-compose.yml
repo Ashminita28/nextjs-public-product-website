@@ -1,16 +1,4 @@
 services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: aviation-web
-    env_file:
-      - ./.env.docker
-    ports:
-      - "3000:3000"
-    depends_on:
-      strapi:
-        condition: service_healthy
 
   strapi:
     build:
@@ -36,3 +24,19 @@ services:
       timeout: 10s
       retries: 5
       start_period: 40s
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        STRAPI_URL: ${STRAPI_URL}
+    container_name: aviation-web
+    env_file:
+      - ./.env.docker
+    ports:
+      - "3000:3000"
+    depends_on:
+      strapi:
+        condition: service_healthy
+
+  

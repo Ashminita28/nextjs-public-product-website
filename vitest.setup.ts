@@ -1,8 +1,9 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
+import type { ReactNode } from 'react';
 
 type LinkProps = {
-  children: unknown;
+  children: ReactNode;
 };
 
 vi.mock('next/navigation', () => ({
@@ -22,6 +23,6 @@ vi.mock('@/lib/strapi-parser', () => ({
   parseRichText: (text: string) => text,
 }));
 
-vi.mock('next/link', () => ({
-  default: ({ children }: { children: React.ReactNode }) => children,
-}));
+if (!HTMLElement.prototype.scrollIntoView) {
+  HTMLElement.prototype.scrollIntoView = vi.fn();
+}

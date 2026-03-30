@@ -8,12 +8,20 @@ import {
   isErrorResponse,
 } from './types/api-types';
 
-const BASE_URL = process.env.STRAPI_URL!;
+const BASE_URL = process.env.STRAPI_URL || 'http://strapi:1337' ;
+
+if (!BASE_URL) {
+  throw new Error('STRAPI_URL is not defined');
+}
 
 type FetchOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: unknown;
   cache?: RequestCache;
+  next?: {
+    revalidate?: number;
+    tags?: string[];
+  };
   auth?: boolean;
 };
 
@@ -45,12 +53,19 @@ async function strapiFetch(
   endpoint: string,
   options: FetchOptions,
 ): Promise<Response> {
-  const { method = 'GET', body, cache = 'no-store', auth = false } = options;
+  const {
+    method = 'GET',
+    body,
+    cache = 'no-store',
+    next,
+    auth = false,
+  } = options;
   const token = await getBearerToken(auth);
 
   return fetch(`${BASE_URL}${endpoint}`, {
     method,
     cache,
+    next,
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -113,11 +128,12 @@ export async function requestRaw<T>(
   endpoint: string,
   options: FetchOptions = {},
 ): Promise<T> {
-  const { method = 'GET', body, cache = 'no-store' } = options;
+  const { method = 'GET', body, cache = 'no-store', next } = options;
 
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     method,
     cache,
+    next,
     headers: {
       'Content-Type': 'application/json',
     },

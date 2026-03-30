@@ -1,3 +1,4 @@
+export const dynamic='force-dynamic';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -7,6 +8,9 @@ import { getSiteUrl } from '@/lib/site';
 import { BlogDetailContent } from '@/components/landing/blog-detail-content';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from '@/lib/icons';
+
+
+
 
 export async function generateMetadata({
   params,

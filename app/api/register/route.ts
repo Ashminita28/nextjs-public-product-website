@@ -1,8 +1,20 @@
 import { NextResponse } from 'next/server';
 import { registerUser } from '@/lib/strapi';
 import { registerSchema } from '@/lib/validations/auth-schema';
+import { hasJsonContentType, isAllowedOrigin } from '@/lib/security';
 
 export async function POST(req: Request): Promise<NextResponse> {
+  if (!isAllowedOrigin(req)) {
+    return NextResponse.json({ error: 'Forbidden origin.' }, { status: 403 });
+  }
+
+  if (!hasJsonContentType(req)) {
+    return NextResponse.json(
+      { error: 'Expected application/json content type.' },
+      { status: 415 },
+    );
+  }
+
   let json: unknown;
   try {
     json = await req.json();

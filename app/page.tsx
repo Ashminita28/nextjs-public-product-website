@@ -1,3 +1,4 @@
+export const dynamic='force-dynamic';
 import type { ReactElement } from 'react';
 import { buildMarketingMetadata } from '@/lib/marketing-metadata';
 import { HeroSection } from '@/components/landing/hero';
@@ -8,6 +9,8 @@ import { PricingSection } from '@/components/landing/pricing';
 import { FeaturesSection } from '@/components/landing/features';
 import { NewsletterForm } from '@/components/newsletter';
 import { getLandingPage } from '@/lib/strapi';
+
+
 
 export async function generateMetadata() {
   return buildMarketingMetadata({ page: 'home' });
