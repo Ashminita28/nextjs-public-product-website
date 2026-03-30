@@ -29,7 +29,7 @@ export function HeroSection({ hero }: { hero: Hero }) {
           className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-primary"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-          Now in public beta
+          Simplifying airline management
         </Badge>
 
         <h1 className="text-balance text-4xl font-semibold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-6xl">
