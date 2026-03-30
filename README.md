@@ -135,7 +135,7 @@ The application uses a hybrid rendering model:
 - Landing page
 - Blog listing
 - Blog detail pages
-- Revalidated every 60 seconds via Next.js caching
+- Revalidated every 300 seconds via Next.js caching
 
 ### SSR (Server-Side Rendering)
 
