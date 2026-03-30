@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { UseCasesSection } from '@/components/landing/use-cases';
-import type { UseCase, RichTextNode } from '@/lib/types';
+import type { UseCase, RichTextNode } from '@/lib/types/shared-types';
 
 vi.mock('@/lib/constants', () => ({
   icons: [() => <span>icon</span>],

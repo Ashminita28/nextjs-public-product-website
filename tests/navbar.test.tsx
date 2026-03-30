@@ -5,7 +5,7 @@ import { Navbar } from '@/components/layout/navbar';
 vi.mock('next-auth/react', () => ({
   useSession: () => ({
     data: null,
-    status: 'authenticated',
+    status: 'unauthenticated',
   }),
 }));
 
@@ -30,6 +30,6 @@ describe('Navbar', () => {
 
   it('shows login when no session', () => {
     render(<Navbar />);
-    expect(screen.getByText('Login')).toBeInTheDocument();
+    expect(screen.getByRole('navigation')).toHaveTextContent('Login');
   });
 });

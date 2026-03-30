@@ -1,45 +1,48 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Newsletter } from '@/components/newsletter';
+import { NewsletterForm } from '@/components/newsletter';
 
-const mockFetch = vi.fn();
-global.fetch = mockFetch as unknown as typeof fetch;
+const fetchMock = vi.fn();
+global.fetch = fetchMock as unknown as typeof fetch;
 
-describe('Newsletter', () => {
+describe('NewsletterForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('renders input and button', () => {
-    render(<Newsletter />);
-    expect(screen.getByPlaceholderText('you@airline.com')).toBeInTheDocument();
-    expect(screen.getByText('Subscribe')).toBeInTheDocument();
+  it('shows validation error for invalid email', async () => {
+    render(<NewsletterForm />);
+
+    fireEvent.change(screen.getByLabelText('Work email'), {
+      target: { value: 'invalid-email' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /join waitlist/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      /invalid email/i,
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('shows error for invalid email', async () => {
-    render(<Newsletter />);
-    fireEvent.click(screen.getByText('Subscribe'));
-
-    expect(
-      await screen.findByText(/Something went wrong/i),
-    ).toBeInTheDocument();
-  });
-
-  it('submits successfully', async () => {
-    mockFetch.mockResolvedValue({
+  it('submits valid email to subscribe API', async () => {
+    fetchMock.mockResolvedValue({
       ok: true,
+      json: async () => ({ message: 'Joined' }),
     } as Response);
 
-    render(<Newsletter />);
+    render(<NewsletterForm />);
 
-    fireEvent.change(screen.getByPlaceholderText('you@airline.com'), {
-      target: { value: 'test@mail.com' },
+    fireEvent.change(screen.getByLabelText('Work email'), {
+      target: { value: 'pilot@example.com' },
     });
-
-    fireEvent.click(screen.getByText('Subscribe'));
+    fireEvent.click(screen.getByRole('button', { name: /join waitlist/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/You're subscribed/i)).toBeInTheDocument();
+      expect(fetchMock).toHaveBeenCalledWith('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'pilot@example.com' }),
+      });
     });
   });
 });

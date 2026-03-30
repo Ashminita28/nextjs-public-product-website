@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { StatsSection } from '@/components/landing/stats';
-import type { Stat } from '@/lib/types';
+import type { Stat } from '@/lib/types/shared-types';
 
 vi.mock('@/lib/constants', () => ({
   iconMap: {},

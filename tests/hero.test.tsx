@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { HeroSection } from '@/components/landing/hero';
-import type { Hero } from '@/lib/types';
+import type { Hero } from '@/lib/types/shared-types';
 
 vi.mock('@/lib/icons', () => ({
   ArrowRight: () => <span>→</span>,
@@ -22,5 +22,18 @@ describe('HeroSection', () => {
     render(<HeroSection hero={mockHero} />);
     expect(screen.getByText('Flight Ops')).toBeInTheDocument();
     expect(screen.getByText('Optimize everything')).toBeInTheDocument();
+  });
+
+  it('sanitizes unsafe CTA links', () => {
+    render(
+      <HeroSection
+        hero={{ ...mockHero, primary_cta_link: 'javascript:alert(1)' }}
+      />,
+    );
+
+    expect(screen.getByRole('link', { name: /start/i })).toHaveAttribute(
+      'href',
+      '/',
+    );
   });
 });

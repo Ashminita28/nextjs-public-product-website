@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { SolutionSection } from '@/components/landing/solution';
-import type { Solution, RichTextNode } from '@/lib/types';
+import type { Solution, RichTextNode } from '@/lib/types/shared-types';
 
 vi.mock('@/lib/strapi-parser', () => ({
   parseRichText: (nodes: RichTextNode[]) =>

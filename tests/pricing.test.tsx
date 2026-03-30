@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { PricingSection } from '@/components/landing/pricing';
-import type { PricingPlan } from '@/lib/types';
+import type { PricingPlan } from '@/lib/types/shared-types';
 
 vi.mock('@/lib/constants', () => ({
   planPerks: [['perk1', 'perk2']],
